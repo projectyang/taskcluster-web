@@ -41,6 +41,8 @@ export default class ViewClients extends PureComponent {
     previousClientId: '',
     // eslint-disable-next-line react/no-unused-state
     closeError: true,
+    // eslint-disable-next-line react/no-unused-state
+    error: false,
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -62,10 +64,16 @@ export default class ViewClients extends PureComponent {
       };
     }
 
-    if (props.data.error && state.closeError === false) {
-      console.log('resetting closeError')
+    if (props.data.error && !state.error) {
       return {
+        error: true,
         closeError: true,
+      };
+    }
+
+    if (!props.data.error && state.error) {
+      return {
+        error: false,
       };
     }
 
@@ -182,9 +190,7 @@ export default class ViewClients extends PureComponent {
       data: { loading, error, clients },
     } = this.props;
     const { clientSearch, closeError } = this.state;
-    if (error) {
-      console.log(error)
-    }
+   console.log('current state', this.state)
     return (
       <Dashboard
         title="Clients"
