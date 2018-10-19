@@ -39,6 +39,8 @@ export default class ViewClients extends PureComponent {
     clientSearch: '',
     // eslint-disable-next-line react/no-unused-state
     previousClientId: '',
+    // eslint-disable-next-line react/no-unused-state
+    closeError: true,
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -60,8 +62,23 @@ export default class ViewClients extends PureComponent {
       };
     }
 
+    if (props.data.error && state.closeError === false) {
+      console.log('resetting closeError')
+      return {
+        closeError: true,
+      };
+    }
+
     return null;
   }
+
+  handleErrorClose = () => {
+    console.log('closing error')
+    this.setState({
+      // eslint-disable-next-line react/no-unused-state
+      closeError: false,
+    });
+  };
 
   handleClientSearchChange = ({ target }) => {
     this.setState({ clientSearch: target.value });
@@ -164,8 +181,10 @@ export default class ViewClients extends PureComponent {
       description,
       data: { loading, error, clients },
     } = this.props;
-    const { clientSearch } = this.state;
-
+    const { clientSearch, closeError } = this.state;
+    if (error) {
+      console.log(error)
+    }
     return (
       <Dashboard
         title="Clients"
@@ -182,7 +201,11 @@ export default class ViewClients extends PureComponent {
       >
         <Fragment>
           {!clients && loading && <Spinner loading />}
-          {error && error.graphQLErrors && <ErrorPanel error={error} />}
+          {error &&
+            error.graphQLErrors &&
+            closeError && (
+              <ErrorPanel error={error} onClose={this.handleErrorClose} />
+            )}
           {clients && (
             <ClientsTable
               onPageChange={this.handlePageChange}

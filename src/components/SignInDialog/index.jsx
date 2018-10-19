@@ -59,7 +59,7 @@ export default class SignInDialog extends Component {
 
     // Since Apollo caches query results, it’s important to get rid of them
     // when the login state changes.
-    await this.props.client.resetStore();
+    this.props.client.resetStore();
     this.props.onAuthorize({
       credentials,
       expires: inOneWeek.toISOString(),
